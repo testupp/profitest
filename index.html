@@ -1,4 +1,4 @@
- <meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
@@ -34,6 +34,687 @@
             border-color: #ff5500;
             background-color: #fff2eb;
         }
+    </style>
+</head>
+<body class="bg-orange-50/40 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
+
+    <!-- Шапка сайта -->
+    <header class="bg-white border-b-2 border-orange-100 sticky top-0 z-50 shadow-md">
+        <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            <div class="flex items-center space-x-3">
+                <!-- Иконка "У" -->
+                <div class="w-10 h-10 rounded-xl orange-gradient flex items-center justify-center text-white font-extrabold text-xl shadow-md shadow-orange-500/30 shrink-0">
+                    У
+                </div>
+                <div>
+                    <h1 class="font-black text-base md:text-lg text-slate-800 leading-tight tracking-tight">Фестиваль Профессий</h1>
+                    <p class="text-xs text-orange-600 font-bold leading-normal">Проф тест по методике Е.А. Климова</p>
+                </div>
+            </div>
+            <!-- Индикатор шага -->
+            <div id="header-progress-text" class="text-sm font-bold text-slate-600 bg-orange-100/60 px-3 py-1 rounded-full whitespace-nowrap shrink-0">
+                Шаг 0 из 15
+            </div>
+        </div>
+    </header>
+
+    <!-- Основной контейнер -->
+    <main class="flex-grow max-w-3xl w-full mx-auto px-4 py-6 md:py-10">
+        
+        <!-- СТАРТОВЫЙ ЭКРАН -->
+        <div id="welcome-screen" class="bg-white rounded-3xl p-6 md:p-10 shadow-xl shadow-orange-900/5 border border-orange-100 text-center space-y-6">
+            <div class="w-20 h-20 mx-auto rounded-2xl bg-orange-100 flex items-center justify-center text-orange-600 shadow-inner">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+            </div>
+            
+            <div class="space-y-3">
+                <h2 class="text-2xl md:text-4xl font-black text-slate-900 tracking-tight leading-tight">Узнайте свои стороны</h2>
+                <p class="text-slate-600 max-w-xl mx-auto text-sm md:text-base leading-relaxed">
+                    Пройдите обновленный тест по классической методологии Е.А. Климова. Ответьте честно на 15 вопросов, выбирая наиболее близкие вам занятия, и получите наглядную диаграмму ваших склонностей.
+                </p>
+            </div>
+
+            <!-- Превью -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-4 text-xs font-bold text-slate-700">
+                <div class="p-3 bg-orange-100/50 rounded-xl border border-orange-200 flex items-center justify-center">🕓 Тестирование занимает около 5 минут.</div>
+                <div class="p-3 bg-orange-100/50 rounded-xl border border-orange-200 flex items-center justify-center">🎯 Подробный результат с описанием ваших качеств</div>
+                <div class="p-3 bg-orange-100/50 rounded-xl border border-orange-200 col-span-2 sm:col-span-1">🧩 Пять направлений, которые помогут определиться.</div>
+            </div>
+
+            <div class="pt-6">
+                <button onclick="startTest()" class="w-full sm:w-auto btn-orange text-white font-extrabold px-10 py-5 rounded-2xl shadow-lg shadow-orange-600/30 text-lg hover:scale-[1.02] active:scale-95 transition-all">
+                    Начать тестирование
+                </button>
+            </div>
+        </div>
+
+        <!-- ЭКРАН ТЕСТА -->
+        <div id="quiz-screen" class="hidden space-y-6">
+            <!-- Прогресс-бар -->
+            <div class="bg-white rounded-2xl p-4 shadow-md border-2 border-orange-100">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-bold text-orange-600" id="progress-percent">Прогресс: 0%</span>
+                    <span class="text-sm font-semibold text-slate-500" id="progress-steps">Вопрос 1 из 15</span>
+                </div>
+                <div class="w-full bg-slate-100 h-3.5 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="orange-gradient h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Карточка вопроса -->
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-xl shadow-orange-900/5 border border-orange-100 space-y-6">
+                <h3 class="text-lg md:text-2xl font-extrabold text-slate-900 leading-snug" id="question-text">
+                    Что вам ближе и интереснее делать в свободное время или в работе?
+                </h3>
+                
+                <!-- Варианты ответов -->
+                <div class="space-y-4" id="answers-container">
+                    <!-- Будут сгенерированы скриптом -->
+                </div>
+            </div>
+
+            <!-- Панель управления -->
+            <div class="bg-white rounded-2xl p-4 shadow-lg border border-orange-100 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                <button id="prev-btn" onclick="prevQuestion()" class="w-full sm:w-auto px-6 py-3.5 rounded-xl border-2 border-slate-200 text-slate-500 font-bold hover:bg-slate-50 active:bg-slate-100 transition-colors flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                    </svg>
+                    Назад
+                </button>
+                
+                <button id="next-btn" onclick="nextQuestion()" disabled class="w-full sm:flex-1 btn-orange text-white font-extrabold px-8 py-4.5 rounded-xl shadow-lg shadow-orange-600/20 text-base flex items-center justify-center gap-2">
+                    <span>Подтвердить выбор и продолжить</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- ЭКРАН РЕЗУЛЬТАТОВ -->
+        <div id="result-screen" class="hidden space-y-8">
+            <div class="bg-white rounded-3xl p-6 md:p-8 shadow-xl shadow-orange-900/5 border border-orange-100 text-center space-y-6">
+                <span class="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-bold bg-orange-100 text-orange-800 border border-orange-200">
+                    🎉 Тест успешно завершен!
+                </span>
+                <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">Ваш профессиональный профиль</h2>
+                
+                <!-- Обертка радарной диаграммы -->
+                <div class="bg-orange-50/50 rounded-2xl p-4 md:p-8 border border-orange-100 flex flex-col justify-center items-center">
+                    <div class="text-center mb-4">
+                        <span class="text-xs font-bold text-orange-600 uppercase tracking-widest block mb-1">Диаграмма склонностей</span>
+                        <h3 class="text-2xl md:text-3xl font-black text-slate-800">Вы человек:</h3>
+                    </div>
+                    
+                    <div class="relative w-full max-w-[480px] aspect-square">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- СПИСОК НАПРАВЛЕНИЙ -->
+            <div class="space-y-6">
+                <h3 class="text-xl font-extrabold text-slate-950 flex items-center gap-2 px-1">
+                    <span class="w-3 h-6 rounded-full bg-orange-600 inline-block"></span>
+                    Подробный разбор ваших результатов
+                </h3>
+
+                <div id="results-details-container" class="space-y-5">
+                    <!-- Заполняется динамически на основе баллов -->
+                </div>
+            </div>
+
+            <!-- Кнопка перезапуска теста -->
+            <div class="text-center pt-4">
+                <button onclick="restartTest()" class="btn-orange text-white font-extrabold px-10 py-5 rounded-2xl shadow-lg shadow-orange-600/30 text-lg hover:scale-[1.02] active:scale-95 transition-all">
+                    Пройти тест заново
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Подвал -->
+    <footer class="bg-white border-t border-orange-100 mt-12 py-6 text-center text-xs text-slate-500 font-medium">
+        <div class="max-w-4xl mx-auto px-4">
+            <p>© 2026 yuxiave для подросткового центра "Угол". Все права защищены.</p>
+        </div>
+    </footer>
+
+    <!-- Логика теста -->
+    <script>
+        const TYPES = {
+            'Ч': {
+                name: 'Человек-Человек',
+                emoji: '🧑‍🤝‍🧑',
+                shortDesc: 'Вам близко взаимодействие с людьми, помощь, консультация, медицинская поддержка и правовая защита.',
+                mediumDesc: 'Это направление связано с интенсивным общением, консультированием, поддержкой и защитой интересов людей. Вы обладаете выраженной эмпатией, коммуникабельностью и организаторскими способностями.',
+                fullDesc: 'Ваше ведущее направление указывает на выраженные способности к коммуникации и работе с людьми. Вы отлично понимаете психологическое состояние и мотивы других, умеете находить подход, обучать и защищать права других. Успех в этой сфере зависит от ответственности, терпения и стремления помогать.<br><br>Профессии этого типа требуют высоких навыков межличностного общения, эмпатии и внимания к каждому человеку.',
+                professions: 'Медицина, юриспруденция'
+            },
+            'Т': {
+                name: 'Человек-Техника',
+                emoji: '🛠️',
+                shortDesc: 'Вам интересно взаимодействие с автотранспортом, техническими механизмами, вождением и аппаратным обеспечением.',
+                mediumDesc: 'Это направление охватывает профессии, связанные с управлением транспортными средствами, устройством механизмов, практической техникой и техническим обеспечением систем.',
+                fullDesc: 'Этот тип характеризует людей с практическим и техническим складом ума. Вам доставляет удовольствие управлять техникой, разбираться в устройстве агрегатов и механизмов, соблюдать правила безопасности и технические стандарты.<br><br>Сфера требует высокой концентрации, хорошей реакции, пространственного мышления и практических навыков.',
+                professions: 'Автошкола54, IT'
+            },
+            'З': {
+                name: 'Человек-Знаковая система',
+                emoji: '💻',
+                shortDesc: 'Вам близка работа с кодом, данными, алгоритмами, нормативными актами, логическими схемами и документацией.',
+                mediumDesc: 'Это направление объединяет профессии, где объектом труда выступают информационные системы, программные языки, своды законов, формулы и структурированные данные.',
+                fullDesc: 'Ваш интерес связан с обработкой логических данных и знаковых систем. Вы обладаете прекрасным системным мышлением, логикой, внимательностью к деталям и способностью анализировать сложную информацию.<br><br>Для вас важны методичность, четкая логика и способность быстро находить ошибки в алгоритмах и документах.',
+                professions: 'IT, юриспруденция'
+            },
+            'И': {
+                name: 'Человек-Художественный образ',
+                emoji: '🎨',
+                shortDesc: 'Творческое самовыражение через сценическое искусство, эмоциональную передачу образов, музыку и визуальное эстетическое восприятие.',
+                mediumDesc: 'Это направление связано с публичными выступлениями, актерским перевоплощением, созданием музыкальных произведений и фотоискусством.',
+                fullDesc: 'Ваш профиль говорит о развитом художественном вкусе, креативном мышлении и стремлении к творческому самовыражению. Вы умеете чувствовать ритм, передавать эмоции, ловить уникальные кадры и воплощать художественные концепции в реальность.<br><br>Творческая свобода и вдохновение помогают вам создавать яркие работы и увлекать за собой людей.',
+                professions: 'Музыка, актерское, фотография'
+            },
+            'П': {
+                name: 'Человек-Природа',
+                emoji: '🌱',
+                shortDesc: 'Вам интересно изучение живых организмов, биосистем, исследование флоры и фауны, экология и естественные науки.',
+                mediumDesc: 'Этот тип объединяет профессии, связанные с исследовательской деятельностью в области биологии, экологией, изучением живых организмов и микробиологией.',
+                fullDesc: 'Ваш интерес направлен на объекты живой природы и научное познание окружающего мира. Вы обладаете высокой наблюдательностью, терпением, научным любопытством и любовью к заведенному порядку природной среды.<br><br>Изучение сложных биологических процессов и сохранение природных ресурсов приносят вам искреннее удовлетворение.',
+                professions: 'Биология'
+            }
+        };
+
+        const QUESTIONS = [
+            {
+                text: "Вы заходите в абсолютно пустую белую комнату. На полу лежат четыре предмета. К какому из них вы интуитивно подойдете сначала?",
+                answers: [
+                    { text: "Глиняный горшок с влажной землей, из которой едва пробивается зеленый росток.", type: "П" },
+                    { text: "Напольные кварцевые часы в прозрачном корпусе, где виден каждый шестереночный механизм.", type: "Т" },
+                    { text: "Старая виниловая пластинка без обложки, на которой вишневым лаком написана какая-то дата.", type: "И" },
+                    { text: "Запечатанный конверт из плотной бумаги, внутри которого прощупывается сложенная карточка.", type: "З" }
+                ]
+            },
+            {
+                text: "Вам предложили выбрать абстрактную картину для украшения рабочего места. Какой сюжет вам ближе по настроению?",
+                answers: [
+                    { text: "Строгая сетка из контрастных линий, пересекающихся под идеальными прямыми углами.", type: "З" },
+                    { text: "Композиция из ярких, хаотичных мазков краски, передающая бурю или взрыв эмоций.", type: "И" },
+                    { text: "Фигура, напоминающая сложную геометрию пчелиных сот или кристаллов.", type: "Т" },
+                    { text: "Размытый силуэт уходящего в туман побережья, где стирается граница неба и воды.", type: "П" }
+                ]
+            },
+            {
+                text: "Представьте, что вы пишете книгу. О чем или о ком будет первая, самая важная метафора в первой главе?",
+                answers: [
+                    { text: "О редких видах животных, путешествиях в дикие джунгли или экосистемах будущего.", type: "П" },
+                    { text: "О внутреннем мире одинокого человека, его скрытых ранах и поисках родной души.", type: "Ч" },
+                    { text: "О безупречной архитектуре старинного собора, где каждый камень держит тонны веса.", type: "Т" },
+                    { text: "О тайном шифре, который веками передается через случайные опечатки в книгах.", type: "З" }
+                ]
+            },
+            {
+                text: "Вам нужно навести идеальный порядок на своем рабочем столе. С чего вы начнете этот процесс?",
+                answers: [
+                    { text: "Переберете все блокноты, бумаги и книги в соответствии с внутренним порядком.", type: "З" },
+                    { text: "Протрете специальным средством экраны, клавиатуру, проверите, чтобы провода не путались.", type: "Т" },
+                    { text: "Освежите воду в вазе со срезанными цветами или опрыскаете стоящий рядом суккулент.", type: "П" },
+                    { text: "Найдете новое, более эстетичное и вдохновляющее место для сувениров, постеров или ламп.", type: "И" }
+                ]
+            },
+            {
+                text: "Вы случайно нашли старый заброшенный дневник неизвестного человека. Какая страница привлечет ваше внимание сильнее всего?",
+                answers: [
+                    { text: "Страница, полностью исписанная аккуратными столбцами цифр, графиками расходов или подсчетами дней.", type: "З" },
+                    { text: "Страница, на которой вклеены засушенные лепестки редких цветов с подписями мест, где их сорвали.", type: "П" },
+                    { text: "Страница с подробным, до мелочей, описанием характера, привычек и скрытых мотивов его близкого друга.", type: "Ч" },
+                    { text: "Страница с набросками стихотворения, где многие слова зачеркнуты в поиске идеальной рифмы.", type: "И" }
+                ]
+            },
+            {
+                text: "Представьте, что вы находитесь в незнакомом городе и немного заблудились. Что вы сделаете, чтобы сориентироваться?",
+                answers: [
+                    { text: "Откроете карту в телефоне и начнете сопоставлять линии улиц со своим направлением движения.", type: "З" },
+                    { text: "Обратитесь к прохожему, который выглядит наиболее приветливо, чтобы спросить дорогу.", type: "Ч" },
+                    { text: "Пойдете на звук оживленной улицы, ориентируясь на шум транспорта и сигналы светофоров.", type: "Т" },
+                    { text: "Будете ориентироваться по заметным шпилям зданий, необычным крышам или вывескам.", type: "И" }
+                ]
+            },
+            {
+                text: "Вам подарили сложный интерактивный конструктор, состоящий из множества элементов. Ваши первые действия?",
+                answers: [
+                    { text: "Внимательно изучите схему и спецификацию деталей, чтобы понять общую логику сборки.", type: "З" },
+                    { text: "Начнете соединять детали на ощупь, проверяя, как работают пазы, крепления и шарниры.", type: "Т" },
+                    { text: "Позовете кого-нибудь из близких, чтобы собирать его вместе, обсуждая процесс.", type: "Ч" },
+                    { text: "Проигнорируете инструкцию и попытаетесь собрать из этого что-то свое, необычной формы.", type: "И" }
+                ]
+            },
+            {
+                text: "Какой звук из перечисленных вызывает у вас наибольшее внутреннее спокойствие и сосредоточенность?",
+                answers: [
+                    { text: "Равномерный, ритмичный стук дождевых капель по стеклу или по крыше дома.", type: "П" },
+                    { text: "Тихое, монотонное жужжание работающего системного блока или кондиционера.", type: "Т" },
+                    { text: "Мелодия, исполняемая на струнном инструменте, где чувствуется настроение музыканта.", type: "И" },
+                    { text: "Гул далекого оживленного кафе, где смешиваются десятки чужих голосов и смех.", type: "Ч" }
+                ]
+            },
+            {
+                text: "Вы пришли на выставку инноваций. У какого стенда вы проведете больше всего времени?",
+                answers: [
+                    { text: "Стенд с демонстрацией работы нового оптического микроскопа или роботизированной руки.", type: "Т" },
+                    { text: "Стенд с интерактивной панелью, показывающей глобальные изменения климата и миграцию птиц.", type: "П" },
+                    { text: "Стенд, где психологи проводят экспресс-тестирование эмоционального интеллекта посетителей.", type: "Ч" },
+                    { text: "Стенд с демонстрацией визуальных эффектов нейросетей, преобразующих текст в трехмерную графику.", type: "И" }
+                ]
+            },
+            {
+                text: "Если бы вам пришлось выбрать одно качество, которое делает вещь по-настоящему ценной, что бы вы выбрали?",
+                answers: [
+                    { text: "Долговечность, прочность конструкции и надежность всех ее элементов.", type: "Т" },
+                    { text: "Уникальность, эстетическая глубина и способность вызывать сильные эмоции.", type: "И" },
+                    { text: "Экологичность, натуральность материалов и минимальный вред для живой природы.", type: "П" },
+                    { text: "Понятность, структурированность информации и удобство в кодировании данных.", type: "З" }
+                ]
+            },
+            {
+                text: "Вам нужно выбрать тему для небольшого исследования или эссе. Какое направление вам кажется наименее скучным?",
+                answers: [
+                    { text: "«Влияние фаз луны и солнечной активности на поведение животных и рост растений».", type: "П" },
+                    { text: "«Эволюция систем шифрования данных: от древних дисков до квантовой криптографии».", type: "З" },
+                    { text: "«Феномен эмпатии: почему мы сопереживаем персонажам фильмов и реальным людям».", type: "Ч" },
+                    { text: "«История одного архитектурного стиля: как форма зданий отражала дух эпохи».", type: "И" }
+                ]
+            },
+            {
+                text: "Вы зашли в книжный магазин, где все книги обернуты в одинаковую крафтовую бумагу, но на них есть короткие подсказки. Что выберете?",
+                answers: [
+                    { text: "«Книга, помогающая понять скрытые мотивы людей, логику конфликтов и природу привязанности».", type: "Ч" },
+                    { text: "«Пошаговое руководство по созданию сложных алгоритмов, макросов и упорядочиванию хаоса».", type: "З" },
+                    { text: "«История великих инженерных открытий, изменивших материальный мир и механику жизни».", type: "Т" },
+                    { text: "«Иллюстрированный атлас скрытых уголков планеты, не тронутых цивилизацией».", type: "П" }
+                ]
+            },
+            {
+                text: "Представьте, что вы оформляете свой личный профиль в новой программе. Какому элементу интерфейса вы уделите больше внимания?",
+                answers: [
+                    { text: "Точной настройке приватности, структуры папок, тегов и фильтрации входящих уведомлений.", type: "З" },
+                    { text: "Выбору цветовой палитры, шрифтов, кастомизации аватара и общей визуальной гармонии.", type: "И" },
+                    { text: "Настройке горячих клавиш, производительности системы и интеграции с другими гаджетами.", type: "Т" },
+                    { text: "Добавлению статусов, отражающих ваше текущее настроение, и дополнительные ссылки на другие сети.", type: "Ч" }
+                ]
+            },
+            {
+                text: "Какая гипотетическая суперспособность привлекает вас больше всего (даже если она кажется странной)?",
+                answers: [
+                    { text: "Понимать язык животных, чувствовать состояние растений и управлять природными стихиями.", type: "П" },
+                    { text: "С ходу видеть структуру любого программного кода, чужие пароли и логические ошибки в текстах.", type: "З" },
+                    { text: "Безошибочно определять, когда человек врет, что он чувствует на самом деле и в чем нуждается.", type: "Ч" },
+                    { text: "Уметь мысленно материализовать любой образ, картину или звук, которые рождаются в голове.", type: "И" }
+                ]
+            },
+            {
+                text: "Вам предложили провести выходной день в одном из уединенных мест на выбор. Куда вы отправитесь?",
+                answers: [
+                    { text: "В современную мастерскую, где можно своими руками разобрать и починить старый хронометр или прибор.", type: "Т" },
+                    { text: "В загородный питомник или заповедник, чтобы провести день, ухаживая за редкими видами птиц.", type: "П" },
+                    { text: "На закрытый психологический тренинг-интенсив по бесконфликтному общению и чтению мимики.", type: "Ч" },
+                    { text: "В пустой театральный зал или галерею, где можно побыть наедине с искусством без толпы туристов.", type: "И" }
+                ]
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let selectedAnswers = new Array(QUESTIONS.length).fill(null);
+        let scores = { 'П': 0, 'Т': 0, 'Ч': 0, 'З': 0, 'И': 0 };
+        let radarChartInstance = null;
+
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const questionText = document.getElementById('question-text');
+        const answersContainer = document.getElementById('answers-container');
+        const progressBar = document.getElementById('progress-bar');
+        const progressPercentText = document.getElementById('progress-percent');
+        const progressStepsText = document.getElementById('progress-steps');
+        const headerProgressText = document.getElementById('header-progress-text');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const resultsDetailsContainer = document.getElementById('results-details-container');
+
+        function startTest() {
+            welcomeScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            currentQuestionIndex = 0;
+            selectedAnswers.fill(null);
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const currentQuestion = QUESTIONS[currentQuestionIndex];
+            questionText.textContent = `${currentQuestionIndex + 1}. ${currentQuestion.text}`;
+            
+            const progressPercent = Math.round((currentQuestionIndex / QUESTIONS.length) * 100);
+            progressBar.style.width = `${progressPercent}%`;
+            progressPercentText.textContent = `Прогресс: ${progressPercent}%`;
+            progressStepsText.textContent = `Вопрос ${currentQuestionIndex + 1} из ${QUESTIONS.length}`;
+            headerProgressText.textContent = `Вопрос ${currentQuestionIndex + 1} из ${QUESTIONS.length}`;
+
+            answersContainer.innerHTML = '';
+
+            currentQuestion.answers.forEach((answer, index) => {
+                const isSelected = selectedAnswers[currentQuestionIndex] === index;
+                
+                const card = document.createElement('div');
+                card.className = `answer-card px-6 py-5 rounded-2xl cursor-pointer flex items-center text-left space-x-5 border-2 hover:border-orange-500 active:scale-[0.99] transition-all duration-150 ${isSelected ? 'selected' : ''}`;
+                card.onclick = () => selectAnswer(index);
+
+                const radioCircle = document.createElement('div');
+                radioCircle.className = `w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 ${isSelected ? 'border-orange-600 bg-orange-600' : 'border-slate-300 bg-white'}`;
+                if (isSelected) {
+                    const dot = document.createElement('div');
+                    dot.className = "w-2.5 h-2.5 rounded-full bg-white";
+                    radioCircle.appendChild(dot);
+                }
+
+                const label = document.createElement('span');
+                label.className = `text-sm md:text-base font-bold leading-snug flex-1 ${isSelected ? 'text-orange-950' : 'text-slate-700'}`;
+                label.textContent = answer.text;
+
+                card.appendChild(radioCircle);
+                card.appendChild(label);
+                answersContainer.appendChild(card);
+            });
+
+            prevBtn.disabled = currentQuestionIndex === 0;
+            if (currentQuestionIndex === 0) {
+                prevBtn.classList.add('opacity-40', 'cursor-not-allowed');
+            } else {
+                prevBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+            }
+
+            const hasSelection = selectedAnswers[currentQuestionIndex] !== null;
+            nextBtn.disabled = !hasSelection;
+        }
+
+        function selectAnswer(answerIndex) {
+            selectedAnswers[currentQuestionIndex] = answerIndex;
+            
+            const cards = answersContainer.children;
+            for (let i = 0; i < cards.length; i++) {
+                const isCurrent = i === answerIndex;
+                if (isCurrent) {
+                    cards[i].classList.add('selected');
+                    const circle = cards[i].querySelector('.rounded-full');
+                    circle.className = 'w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 border-orange-600 bg-orange-600';
+                    circle.innerHTML = '<div class="w-2.5 h-2.5 rounded-full bg-white"></div>';
+                    cards[i].querySelector('span').className = 'text-sm md:text-base text-orange-950 font-extrabold leading-snug flex-1';
+                } else {
+                    cards[i].classList.remove('selected');
+                    const circle = cards[i].querySelector('.rounded-full');
+                    circle.className = 'w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 border-slate-300 bg-white';
+                    circle.innerHTML = '';
+                    cards[i].querySelector('span').className = 'text-sm md:text-base text-slate-700 font-bold leading-snug flex-1';
+                }
+            }
+
+            nextBtn.disabled = false;
+        }
+
+        function nextQuestion() {
+            if (selectedAnswers[currentQuestionIndex] === null) return;
+
+            if (currentQuestionIndex < QUESTIONS.length - 1) {
+                currentQuestionIndex++;
+                renderQuestion();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+                calculateResults();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function calculateResults() {
+            scores = { 'П': 0, 'Т': 0, 'Ч': 0, 'З': 0, 'И': 0 };
+
+            selectedAnswers.forEach((answerIndex, qIndex) => {
+                if (answerIndex !== null) {
+                    const type = QUESTIONS[qIndex].answers[answerIndex].type;
+                    if (scores[type] !== undefined) {
+                        scores[type]++;
+                    }
+                }
+            });
+
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+            headerProgressText.textContent = "Результаты";
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            renderRadarChart();
+            renderDescriptions();
+        }
+
+        function renderRadarChart() {
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            
+            const labels = ['Человек', 'Техника', 'Знак', 'Искусство', 'Природа'];
+            const dataValues = [scores['Ч'], scores['Т'], scores['З'], scores['И'], scores['П']];
+
+            const isMobile = window.innerWidth < 640;
+            const fontSize = isMobile ? 12 : 14;
+
+            if (radarChartInstance) {
+                radarChartInstance.destroy();
+            }
+
+            radarChartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Склонность',
+                        data: dataValues,
+                        backgroundColor: 'rgba(255, 85, 0, 0.25)',
+                        borderColor: '#ff5500',
+                        borderWidth: 4,
+                        pointBackgroundColor: '#ff5500',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#ff5500',
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: {
+                                color: 'rgba(203, 213, 225, 0.9)',
+                                lineWidth: 1.5
+                            },
+                            grid: {
+                                color: 'rgba(203, 213, 225, 0.7)',
+                                lineWidth: 1
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: fontSize,
+                                    weight: '900',
+                                    family: 'sans-serif'
+                                },
+                                color: '#1e293b',
+                                padding: 15
+                            },
+                            ticks: {
+                                display: false,
+                                stepSize: 1
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: Math.max(...dataValues, 3)
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderDescriptions() {
+            const sortedResults = Object.keys(scores).map(key => {
+                return {
+                    key: key,
+                    score: scores[key],
+                    ...TYPES[key]
+                };
+            }).sort((a, b) => b.score - a.score);
+
+            resultsDetailsContainer.innerHTML = '';
+
+            sortedResults.forEach((result, index) => {
+                const card = document.createElement('div');
+                
+                if (index === 0) {
+                    card.className = "bg-white border-4 border-orange-500 rounded-3xl p-6 md:p-8 space-y-4 shadow-xl";
+                    card.innerHTML = `
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b-2 border-orange-100 pb-4">
+                            <div class="flex items-center gap-3">
+                                <span class="text-4xl shrink-0">${result.emoji}</span>
+                                <div>
+                                    <h4 class="text-xl md:text-2xl font-black text-slate-900">${result.name}</h4>
+                                    <span class="inline-block mt-1 bg-orange-600 text-white text-[11px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-sm">
+                                        Ведущее направление
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="text-left sm:text-right bg-orange-100/80 px-4 py-2 rounded-xl">
+                                <span class="text-2xl font-black text-orange-600">${result.score}</span>
+                                <span class="text-sm font-extrabold text-orange-950">/15 баллов</span>
+                            </div>
+                        </div>
+                        <p class="text-base md:text-lg text-slate-900 leading-relaxed font-bold">
+                            ${result.mediumDesc}
+                        </p>
+                        <div class="text-sm md:text-base text-slate-700 leading-relaxed space-y-3 bg-orange-50/50 rounded-2xl p-4 md:p-6 border border-orange-100">
+                            ${result.fullDesc}
+                        </div>
+                        <div class="bg-orange-100/60 rounded-2xl p-5 border-l-4 border-orange-600">
+                            <h5 class="font-extrabold text-orange-950 text-sm md:text-base uppercase tracking-wide mb-2">Рекомендуемые профессии и сферы:</h5>
+                            <p class="text-orange-900 font-bold text-base leading-relaxed">${result.professions}</p>
+                        </div>
+                    `;
+                } else if (index === 1) {
+                    card.className = "bg-white border-2 border-orange-300 rounded-3xl p-6 space-y-4 shadow-md";
+                    card.innerHTML = `
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-3">
+                            <div class="flex items-center gap-3">
+                                <span class="text-3xl shrink-0">${result.emoji}</span>
+                                <div>
+                                    <h4 class="text-lg md:text-xl font-black text-slate-900">${result.name}</h4>
+                                    <span class="inline-block bg-slate-100 text-slate-700 text-[10px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider mt-1">
+                                        Второй приоритет
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="text-left sm:text-right bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
+                                <span class="text-xl font-extrabold text-orange-600">${result.score}</span>
+                                <span class="text-xs font-bold text-slate-500">баллов</span>
+                            </div>
+                        </div>
+                        <p class="text-sm md:text-base text-slate-700 leading-relaxed font-bold">
+                            ${result.mediumDesc}
+                        </p>
+                        <p class="text-xs md:text-sm text-slate-600 leading-relaxed">
+                            ${result.fullDesc.split('<br><br>')[0]}
+                        </p>
+                        <div class="bg-orange-50 rounded-xl p-4 border border-orange-200">
+                            <h5 class="font-extrabold text-orange-950 text-xs md:text-sm uppercase tracking-wide mb-1.5">Рекомендуемые профессии:</h5>
+                            <p class="text-orange-800 font-bold text-sm md:text-base">${result.professions}</p>
+                        </div>
+                    `;
+                } else if (index === 2) {
+                    card.className = "bg-white border border-slate-200 rounded-2xl p-5 md:p-6 space-y-3 shadow-sm";
+                    card.innerHTML = `
+                        <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+                            <div class="flex items-center gap-2.5">
+                                <span class="text-2xl shrink-0">${result.emoji}</span>
+                                <h4 class="text-base md:text-lg font-extrabold text-slate-900">${result.name}</h4>
+                            </div>
+                            <div class="bg-slate-100/80 px-2.5 py-1 rounded-md text-slate-700">
+                                <span class="text-base font-extrabold text-orange-600">${result.score}</span>
+                                <span class="text-[10px] font-bold">баллов</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-slate-700 leading-relaxed font-semibold">
+                            ${result.mediumDesc}
+                        </p>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            ${result.shortDesc}
+                        </p>
+                        <div class="bg-orange-50/70 rounded-xl p-3 border border-orange-100/80">
+                            <h5 class="font-extrabold text-orange-900 text-xs uppercase tracking-wide mb-1">Рекомендуемые направления:</h5>
+                            <p class="text-orange-800 font-bold text-xs md:text-sm">${result.professions}</p>
+                        </div>
+                    `;
+                } else {
+                    card.className = "bg-slate-50 border border-slate-150 rounded-2xl p-5 space-y-3.5 shadow-xs";
+                    card.innerHTML = `
+                        <div class="flex justify-between items-center border-b border-slate-200 pb-2">
+                            <div class="flex items-center gap-3">
+                                <span class="text-xl shrink-0 opacity-80">${result.emoji}</span>
+                                <h4 class="text-sm md:text-base font-extrabold text-slate-800">${result.name}</h4>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-base font-bold text-slate-500">${result.score}</span>
+                                <span class="text-[10px] text-slate-400">б.</span>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="text-xs md:text-sm text-slate-600 leading-relaxed">
+                                ${result.shortDesc}
+                            </p>
+                            <p class="text-xs text-slate-500 italic">
+                                Характеризуется средним уровнем склонности, но данные навыки также могут гармонично развиваться и дополнять вашу основную деятельность.
+                            </p>
+                        </div>
+                        <div class="bg-slate-100/80 rounded-xl p-3 border border-slate-200/80">
+                            <h5 class="font-bold text-slate-700 text-[11px] uppercase tracking-wider mb-1">Возможные сферы применения:</h5>
+                            <p class="text-slate-600 font-bold text-xs">${result.professions}</p>
+                        </div>
+                    `;
+                }
+
+                resultsDetailsContainer.appendChild(card);
+            });
+        }
+
+        function restartTest() {
+            resultScreen.classList.add('hidden');
+            welcomeScreen.classList.remove('hidden');
+            headerProgressText.textContent = "Шаг 0 из 15";
+            selectedAnswers.fill(null);
+            currentQuestionIndex = 0;
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
+
+```
     </style>
 </head>
 <body class="bg-orange-50/40 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
